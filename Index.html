@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pauschalreisen - DERM Präsentation</title>
+<style>
+  :root {
+    --bg-primary: #0f172a;
+    --bg-card: #1e293b;
+    --accent-teal: #14b8a6;
+    --accent-orange: #f97316;
+    --accent-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    overflow-x: hidden;
+  }
+
+  /* Presentation Container */
+  .deck-container {
+    width: 100%;
+    max-width: 1000px;
+    height: 600px;
+    position: relative;
+    perspective: 1000px;
+  }
+
+  .slide {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    height: 100%;
+    padding: 2.5rem;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(10px);
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+    z-index: 10;
+  }
+
+  /* Header Controls */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .slide-header h2 {
+    font-size: 1.8rem;
+    color: var(--accent-teal);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .slide-badge {
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--accent-teal);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(20, 184, 166, 0.3);
+  }
+
+  /* Content Elements */
+  .slide-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .quote-box {
+    background: rgba(56, 189, 248, 0.08);
+    border-left: 4px solid var(--accent-blue);
+    padding: 1.25rem;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    line-height: 1.6;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .card h3 {
+    color: var(--accent-blue);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card.orange h3 {
+    color: var(--accent-orange);
+  }
+
+  .card p, .card ul {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .card ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .card ul li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .card ul li::before {
+    content: "•";
+    color: var(--accent-teal);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+
+  .pro-con {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .pro-card {
+    background: rgba(20, 184, 166, 0.05);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .con-card {
+    background: rgba(249, 115, 22, 0.05);
+    border: 1px solid rgba(249, 115, 22, 0.2);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .pro-card h3 { color: var(--accent-teal); margin-bottom: 0.5rem; }
+  .con-card h3 { color: var(--accent-orange); margin-bottom: 0.5rem; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    background-color: rgba(15, 23, 42, 0.8);
+    color: var(--accent-teal);
+  }
+
+  td {
+    color: var(--text-muted);
+  }
+
+  .badge-tag {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-blue);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  /* Footer & Navigation Controls */
+  .slide-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .nav-controls {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--border);
+    color: var(--accent-teal);
+  }
+
+  .btn-primary {
+    background: var(--accent-teal);
+    color: #0f172a;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: #0d9488;
+    color: #ffffff;
+  }
+
+  .progress-bar {
+    width: 200px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent-teal);
+    width: 14.28%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck-container">
+
+  <!-- SLIDE 1 -->
+  <div class="slide active">
+    <div class="slide-header">
+      <h2><span>🚀</span> Die Pauschalreise</h2>
+      <span class="slide-badge">Folie 1 / 7</span>
+    </div>
+    <div class="slide-content">
+      <div style="text-align: center; padding: 1rem 0;">
+        <h1 style="font-size: 2.2rem; color: var(--text-main); margin-bottom: 0.8rem;">
+          Vom Massenprodukt zur flexiblen Modulreise
+        </h1>
+        <p style="color: var(--accent-blue); font-size: 1.1rem; margin-bottom: 1.5rem;">
+          Destinations-, Event- und Reisemanagement (DERM) – 4. Jahrgang
+        </p>
+      </div>
+      <div class="quote-box">
+        <strong>Einstieg / Hook für den Vortrag:</strong><br>
+        „Warum ermöglicht erst ein Bündel aus Flug und Hotel Millionen Menschen das Reisen – und wie gestaltet man aus vorgefertigten Bausteinen heute einen maßgeschneiderten Traumurlaub?“
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>DERM Skriptum | S. 22–26</span>
+      <span>Thema: Pauschalreisen</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2><span>📦</span> Was ist eine Pauschalreise?</h2>
+      <span class="slide-badge">Folie 2 / 7</span>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Definition & Erstellung</h3>
+          <ul>
+            <li><strong>Marktgängige Leistungspakete:</strong> Erstellt von Reiseveranstaltern, vertrieben über Reisemittler (Reisebüros).</li>
+            <li><strong>Bündelung:</strong> Kombination von mindestens 2 Reise-Teilleistungen zu einem neuen Gesamtprodukt.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Der Preisvorteil</h3>
+          <ul>
+            <li><strong>Günstiger als Einzelbuchung:</strong> Verkaufspreis liegt unter der Summe der einzelnen Bausteine.</li>
+            <li><strong>Mengenrabatte:</strong> Veranstalter verhandeln Großabnehmer-Rabatte und geben diese weiter.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card orange">
+        <h3>💡 Kernmerkmale auf einen Blick</h3>
+        <p>Einheitlicher Gesamtpreis • Vertraglich abgesichert • Bündelung von Transfer & Beherbergung • Günstiger als Individualbuchung</p>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>DERM Skriptum | S. 22</span>
+      <span>Grundlagen & Begriff</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2><span>🌍</span> Entstehung & Konsequenzen</h2>
+      <span class="slide-badge">Folie 3 / 7</span>
+    </div>
+    <div class="slide-content">
+      <div class="card">
+        <h3>Wie kam es zur Entwicklung?</h3>
+        <p>Durch günstige Package-Preise wurden Urlaubsreisen überhaupt erst für breite Bevölkerungsschichten finanziell leistbar – man spricht von der <strong style="color: var(--accent-teal);">„Demokratisierung des Reisens“</strong>.</p>
+      </div>
+      <div class="pro-con">
+        <div class="pro-card">
+          <h3>🟢 Positive Konsequenzen</h3>
+          <ul>
+            <li><strong>Demokratisierung:</strong> Reisen ist kein Privileg Weniger mehr.</li>
+            <li><strong>Günstige Konditionen:</strong> Hohe Ersparnis durch Mengenrabatte.</li>
+            <li><strong>Struktur & Sicherheit:</strong> Vorgefertigte, verlässliche Angebote.</li>
+          </ul>
+        </div>
+        <div class="con-card">
+          <h3>🔴 Negative Konsequenzen</h3>
+          <ul>
+            <li><strong>Overtourism:</strong> Überlastung populärer Zielregionen.</li>
+            <li><strong>Umweltbelastung:</strong> Zerstörung natürlicher Lebensräume.</li>
+            <li><strong>Kulturverlust:</strong> Verlust der ursprünglichen Authentizität.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>DERM Skriptum | S. 22</span>
+      <span>Folgen der Masse</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2><span>🏷️</span> Kategorisierung & Formen</h2>
+      <span class="slide-badge">Folie 4 / 7</span>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>✈️ Nach Verkehrsmittel</h3>
+          <p style="margin-bottom: 0.4rem;">
+            <span class="badge-tag">Flug</span> Charter, Inclusive Tours (IT), Kreuzflüge<br>
+            <span class="badge-tag">Bus</span> Rundreisen, Kaffeefahrten, Events<br>
+            <span class="badge-tag">Bahn</span> Sonderzüge, Regelzüge<br>
+            <span class="badge-tag">Schiff</span> Kreuzfahrten, River Cruises<br>
+            <span class="badge-tag">PKW</span> Selbstfahrer, Konvoi-Arrangements
+          </p>
+        </div>
+        <div class="card">
+          <h3>🎯 Nach Reisemotiven</h3>
+          <p style="margin-bottom: 0.4rem;">
+            <span class="badge-tag">Erholung</span> Badeurlaub, Kur, Wellness<br>
+            <span class="badge-tag">Kultur</span> Bildungs-, Studien-, Pilgerreisen<br>
+            <span class="badge-tag">Aktiv</span> Sport-, Golf-, Wandertourismus<br>
+            <span class="badge-tag">Erlebnis</span> Cluburlaub, Öko-Reisen
+          </p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📍 Nach Destination</h3>
+          <p>Fernreisen • Städtereisen • Inlands- vs. Auslandsreisen • Bestimmte Zielländer</p>
+        </div>
+        <div class="card">
+          <h3>👥 Nach Soziologie / Zielgruppe</h3>
+          <p>Familien • Senioren • Singles • Jugendliche • Akademiker • MICE</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>DERM Skriptum | S. 23–25</span>
+      <span>Klassifikation von Pauschalreisen</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2><span>🧩</span> Die 3 Leistungssäulen</h2>
+      <span class="slide-badge">Folie 5 / 7</span>
+    </div>
+    <div class="slide-content">
+      <div class="grid-3">
+        <div class="card">
+          <h3>1. Reiseleistungen</h3>
+          <p><strong>Materielle Bausteine:</strong></p>
+          <ul>
+            <li>Transport & Transfer
